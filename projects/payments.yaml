@@ -1,0 +1,25 @@
+# Blast-radius boundary for the payment workload: it can only deploy from these two repos,
+# only into the payments namespace, and may create no cluster-scoped resources except the
+# Namespace itself (needed by CreateNamespace=true).
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: payments
+  namespace: argocd
+spec:
+  description: Payment processing workloads
+  sourceRepos:
+    - https://github.com/princengcobo186-sketch/camp-payment-service.git
+    - https://github.com/princengcobo186-sketch/camp-k8s-gitops.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: payments
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceBlacklist:
+    # The app has no business creating RBAC or quota objects; those belong to the platform.
+    - group: rbac.authorization.k8s.io
+      kind: "*"
+    - group: ""
+      kind: ResourceQuota
