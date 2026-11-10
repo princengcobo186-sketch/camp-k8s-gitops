@@ -1,0 +1,33 @@
+# Two sources: the chart from the service repo at an immutable git tag, and the environment
+# values from this repo (referenced as $values). Promoting a new image is a values change here;
+# changing chart templates is a new chart tag in camp-payment-service.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: payment-service
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  project: payments
+  sources:
+    - repoURL: https://github.com/princengcobo186-sketch/camp-payment-service.git
+      targetRevision: chart-v0.1.0
+      path: chart/payment-service
+      helm:
+        releaseName: payment-service
+        valueFiles:
+          - $values/apps/payment-service/values-common.yaml
+          - $values/apps/payment-service/envs/local/values.yaml
+    - repoURL: https://github.com/princengcobo186-sketch/camp-k8s-gitops.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: payments
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
