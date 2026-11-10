@@ -1,0 +1,11 @@
+# Keeps SHA-pinned actions current through reviewed PRs. Further ecosystems are added as the
+# code that needs them lands.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]

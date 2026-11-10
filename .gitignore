@@ -1,0 +1,16 @@
+# Rendered manifests from local `helm template` / validation runs
+rendered/
+charts/*.tgz
+
+# Cluster credentials must never be committed
+kubeconfig*
+*.kubeconfig
+
+# Secrets never live in this repo; ExternalSecrets reference AWS Secrets Manager instead
+*.secret.yaml
+.env
+.env.*
+
+.idea/
+.vscode/
+.DS_Store

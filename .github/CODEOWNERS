@@ -1,0 +1,6 @@
+# Every change needs the owner's review. Production paths are listed explicitly: a prod
+# promotion is a change under these paths, so this is the promotion approval gate.
+*                          @princengcobo186-sketch
+/clusters/prod/            @princengcobo186-sketch
+/apps/*/envs/prod/         @princengcobo186-sketch
+/projects/                 @princengcobo186-sketch

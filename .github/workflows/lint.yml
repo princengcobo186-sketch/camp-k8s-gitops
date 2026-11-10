@@ -1,0 +1,29 @@
+# Repository hygiene: runs the same pre-commit hooks developers run locally. Needs no secrets,
+# so it is safe on every pull request, including forks.
+name: Lint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  pre-commit:
+    name: pre-commit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # pipx ships with the runner image; the pre-commit version is pinned here.
+      - name: pre-commit
+        run: pipx run pre-commit==4.7.0 run --all-files --show-diff-on-failure
