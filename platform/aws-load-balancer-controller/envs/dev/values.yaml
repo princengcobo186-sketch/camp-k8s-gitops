@@ -1,0 +1,11 @@
+# Dev (EKS). Credentials come from the Pod Identity association for kube-system/
+# aws-load-balancer-controller in camp-infra-live; the chart must not create its own ServiceAccount,
+# because that association binds to the name below.
+clusterName: camp-dev
+region: eu-north-1
+
+serviceAccount:
+  create: false
+  name: aws-load-balancer-controller
+
+replicaCount: 1

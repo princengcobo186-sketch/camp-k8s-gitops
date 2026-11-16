@@ -1,0 +1,19 @@
+# Platform add-ons (load balancer controller, and later observability and policy). These may create
+# cluster-scoped objects such as CRDs and RBAC, which the payments project may not. Sources are
+# limited to the Helm repository and this repo; destinations to the namespaces the add-ons use.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: platform
+  namespace: argocd
+spec:
+  description: Cluster add-ons owned by the platform
+  sourceRepos:
+    - https://aws.github.io/eks-charts
+    - https://github.com/princengcobo186-sketch/camp-k8s-gitops.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: kube-system
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"

@@ -1,0 +1,10 @@
+# Dev (EKS): the image is pulled from the shared ECR repository. The tag is the git SHA of the
+# commit that passed the release pipeline, pushed once and immutable in ECR. Promotion to staging
+# and prod copies this tag, never rebuilds it.
+image:
+  repository: 059763918827.dkr.ecr.eu-north-1.amazonaws.com/camp/payment-service
+  tag: 3043c645f4d86d0271e8dfff75a6e6fb2e31917b
+  pullPolicy: IfNotPresent
+
+env:
+  APP_ENV: dev
