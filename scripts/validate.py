@@ -47,13 +47,23 @@ def validate_application(path: Path, work: Path) -> int:
             helm = src.get("helm")
             if not helm or "ref" in src:
                 continue
-            checkout = work / f"{name}-chart"
-            if not checkout.exists():
-                run(["git", "clone", "--quiet", "--depth", "1", "--branch",
-                     src["targetRevision"], src["repoURL"], str(checkout)])
-            cmd = ["helm", "template", helm.get("releaseName", name), str(checkout / src["path"])]
+            if "chart" in src:
+                # Chart from a Helm repository, pinned by version.
+                chart_dir = None
+                cmd = ["helm", "template", helm.get("releaseName", name), src["chart"],
+                       "--repo", src["repoURL"], "--version", src["targetRevision"]]
+            else:
+                # Chart from a git repository, pinned by tag.
+                chart_dir = work / f"{name}-chart"
+                if not chart_dir.exists():
+                    run(["git", "clone", "--quiet", "--depth", "1", "--branch",
+                         src["targetRevision"], src["repoURL"], str(chart_dir)])
+                cmd = ["helm", "template", helm.get("releaseName", name), str(chart_dir / src["path"])]
             for vf in helm.get("valueFiles", []):
-                resolved = ROOT / vf.removeprefix("$values/") if vf.startswith("$values/") else checkout / vf
+                if vf.startswith("$values/"):
+                    resolved = ROOT / vf.removeprefix("$values/")
+                else:
+                    resolved = (chart_dir or ROOT) / vf
                 if not resolved.is_file():
                     fail(f"{path.name}: {name} references missing values file {vf}")
                 cmd += ["-f", str(resolved)]

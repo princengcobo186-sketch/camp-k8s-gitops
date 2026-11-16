@@ -1,0 +1,30 @@
+# Wave -10: CRDs and the webhook must exist before anything that creates Ingress or Service
+# resources of type LoadBalancer. Permissions come from the Pod Identity association that
+# camp-infra-live creates for this ServiceAccount; no role ARN is handled here.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-load-balancer-controller
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+spec:
+  project: platform
+  sources:
+    - repoURL: https://aws.github.io/eks-charts
+      chart: aws-load-balancer-controller
+      targetRevision: 3.6.3
+      helm:
+        releaseName: aws-load-balancer-controller
+        valueFiles:
+          - $values/platform/aws-load-balancer-controller/envs/dev/values.yaml
+    - repoURL: https://github.com/princengcobo186-sketch/camp-k8s-gitops.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
