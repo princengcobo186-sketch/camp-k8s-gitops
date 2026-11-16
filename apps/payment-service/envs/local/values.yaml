@@ -1,0 +1,9 @@
+# Local (Kind): the image is built on the developer machine and loaded into the cluster with
+# `make dev` in camp-payment-service, so there is no registry and nothing to pull.
+image:
+  repository: camp/payment-service
+  tag: local
+  pullPolicy: Never   # fail loudly if the image was not loaded, instead of trying a registry
+
+env:
+  APP_ENV: local

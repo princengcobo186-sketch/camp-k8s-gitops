@@ -1,0 +1,3 @@
+# Identical in every environment. Differences live in envs/<env>/values.yaml.
+env:
+  LOG_LEVEL: INFO
