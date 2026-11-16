@@ -8,3 +8,16 @@ image:
 
 env:
   APP_ENV: dev
+
+# Exposed through an internal ALB, reachable only from inside the VPC. The dev smoke test runs
+# from a pod in the cluster. Nothing is exposed to the internet, and no operator IP is committed.
+ingress:
+  enabled: true
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /readyz
+
+# Prometheus scrapes /metrics through this ServiceMonitor (needs kube-prometheus-stack's CRDs).
+serviceMonitor:
+  enabled: true

@@ -1,0 +1,39 @@
+# Dev (EKS). Metrics and Grafana, sized for two small spot nodes. Production sizing is a separate
+# values file, reviewed on its own.
+
+grafana:
+  # The admin login is a Secret created outside git, before this app syncs:
+  #   kubectl -n monitoring create secret generic grafana-admin \
+  #     --from-literal=admin-user=admin --from-literal=admin-password="$(openssl rand -base64 24)"
+  # See README.md. The chart's default password must never be used.
+  admin:
+    existingSecret: grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
+  persistence:
+    enabled: false
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+    limits: { memory: 256Mi }
+
+prometheus:
+  prometheusSpec:
+    retention: 2d
+    resources:
+      requests: { cpu: 100m, memory: 400Mi }
+      limits: { memory: 800Mi }
+    # Select ServiceMonitors from every namespace, not only those labelled for this release.
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+# Alert routing is Phase 5, with a receiver someone is subscribed to. Until then nothing fires.
+alertmanager:
+  enabled: false
+
+# EKS runs the control plane and does not expose these endpoints, so these targets would
+# only be permanently down.
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeEtcd:
+  enabled: false

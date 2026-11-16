@@ -12,7 +12,7 @@ spec:
   project: payments
   sources:
     - repoURL: https://github.com/princengcobo186-sketch/camp-payment-service.git
-      targetRevision: chart-v0.1.0
+      targetRevision: chart-v0.2.0
       path: chart/payment-service
       helm:
         releaseName: payment-service
