@@ -2,6 +2,7 @@
 # camp-infra-live binds to by namespace and name.
 clusterName: camp-dev
 region: eu-north-1
+vpcId: vpc-0b47e32bf04f6e2ae
 
 serviceAccount:
   create: true
