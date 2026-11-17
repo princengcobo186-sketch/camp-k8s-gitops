@@ -10,6 +10,7 @@ spec:
   description: Cluster add-ons owned by the platform
   sourceRepos:
     - https://aws.github.io/eks-charts
+    - https://prometheus-community.github.io/helm-charts
     - https://github.com/princengcobo186-sketch/camp-k8s-gitops.git
   destinations:
     - server: https://kubernetes.default.svc
